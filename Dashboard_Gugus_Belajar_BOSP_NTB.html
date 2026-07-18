@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Monitor Gugus Belajar · BOSP Kinerja Terbaik NTB</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#12182B;
+    --bg-deep:#0D1220;
+    --panel:#1B2340;
+    --panel-soft:#202B4D;
+    --panel-line:rgba(237,234,224,0.09);
+    --panel-line-strong:rgba(237,234,224,0.18);
+    --text:#EDEAE0;
+    --text-dim:#A9AFC3;
+    --text-faint:#727A99;
+    --gold:#E3A83B;
+    --teal:#4FA98C;
+    --coral:#E2695A;
+    --blue:#6C8FE0;
+    --orchid:#C77DD1;
+    --mint:#7FD1C6;
+    --bronze:#B8935A;
+    --slate:#8C97C4;
+    --radius:14px;
+    --radius-sm:8px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(ellipse 1200px 600px at 15% -10%, rgba(227,168,59,0.10), transparent 60%),
+      radial-gradient(ellipse 900px 500px at 100% 0%, rgba(79,169,140,0.08), transparent 55%),
+      var(--bg);
+    color:var(--text);
+    font-family:'Inter',system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+  ::selection{background:rgba(227,168,59,0.35);}
+  a{color:inherit;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  .display{font-family:'Space Grotesk',sans-serif;}
+
+  .wrap{max-width:1320px;margin:0 auto;padding:28px 28px 64px;}
+
+  /* ===== Header ===== */
+  header.top{
+    display:flex;justify-content:space-between;align-items:flex-end;gap:24px;
+    padding-bottom:22px;margin-bottom:26px;
+    border-bottom:1px solid var(--panel-line);
+    flex-wrap:wrap;
+  }
+  .brand-eyebrow{
+    font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--gold);margin:0 0 8px;display:flex;align-items:center;gap:8px;
+  }
+  .brand-eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 3px rgba(227,168,59,0.18);}
+  h1.title{font-family:'Space Grotesk',sans-serif;font-size:clamp(26px,3.4vw,38px);font-weight:600;margin:0;line-height:1.08;letter-spacing:-0.01em;}
+  h1.title em{font-style:normal;color:var(--gold);}
+  .subtitle{color:var(--text-dim);font-size:14.5px;margin:8px 0 0;max-width:640px;line-height:1.5;}
+  .top-meta{text-align:right;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text-faint);line-height:1.8;}
+  .top-meta b{color:var(--text-dim);font-weight:600;}
+
+  /* ===== KPI row ===== */
+  .kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:30px;}
+  .kpi{
+    background:linear-gradient(180deg,var(--panel),var(--panel-soft));
+    border:1px solid var(--panel-line);border-radius:var(--radius);
+    padding:18px 18px 16px;position:relative;overflow:hidden;
+  }
+  .kpi::after{content:'';position:absolute;top:0;left:0;width:100%;height:2px;background:var(--kc,var(--gold));opacity:.7;}
+  .kpi .label{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint);margin-bottom:10px;}
+  .kpi .value{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:600;color:var(--text);letter-spacing:-0.01em;}
+  .kpi .value small{font-family:'Inter';font-size:13px;font-weight:500;color:var(--text-dim);margin-left:4px;}
+  .kpi .sub{font-size:12px;color:var(--text-faint);margin-top:6px;}
+
+  /* ===== Section headers ===== */
+  .section{margin-bottom:34px;}
+  .section-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px;flex-wrap:wrap;gap:10px;}
+  .section-head h2{font-family:'Space Grotesk',sans-serif;font-size:19px;font-weight:600;margin:0;display:flex;align-items:center;gap:10px;}
+  .section-head h2 .idx{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--gold);border:1px solid rgba(227,168,59,0.35);border-radius:4px;padding:1px 7px;}
+  .section-head p{margin:0;color:var(--text-faint);font-size:13px;max-width:480px;text-align:right;}
+
+  /* ===== Wave timeline (signature) ===== */
+  .wave-scroll{
+    display:flex;gap:12px;overflow-x:auto;padding:6px 2px 18px;
+    scrollbar-width:thin;scrollbar-color:var(--panel-soft) transparent;
+  }
+  .wave-scroll::-webkit-scrollbar{height:7px;}
+  .wave-scroll::-webkit-scrollbar-thumb{background:var(--panel-soft);border-radius:10px;}
+  .wave-card{
+    flex:0 0 168px;background:var(--panel);border:1px solid var(--panel-line);border-radius:var(--radius-sm);
+    padding:13px 14px 14px;cursor:pointer;transition:border-color .15s,transform .15s,background .15s;position:relative;
+  }
+  .wave-card:hover{border-color:var(--panel-line-strong);transform:translateY(-2px);}
+  .wave-card.active{border-color:var(--gold);background:linear-gradient(180deg,rgba(227,168,59,0.10),var(--panel));}
+  .wave-card .wnum{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-faint);letter-spacing:.06em;}
+  .wave-card .wdate{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:600;margin:5px 0 8px;}
+  .wave-track{display:flex;gap:3px;margin-bottom:9px;}
+  .wave-track span{flex:1;height:5px;border-radius:3px;}
+  .wave-track .d1{background:var(--gold);}
+  .wave-track .d2{background:var(--teal);}
+  .wave-track .d3{background:var(--blue);}
+  .wave-card .wstat{font-size:11.5px;color:var(--text-dim);display:flex;justify-content:space-between;}
+  .wave-card .wstat b{color:var(--text);font-weight:600;}
+  .wave-legend{display:flex;gap:18px;font-size:11.5px;color:var(--text-faint);margin-top:2px;flex-wrap:wrap;}
+  .wave-legend span{display:inline-flex;align-items:center;gap:6px;}
+  .wave-legend i{width:9px;height:9px;border-radius:2px;display:inline-block;}
+
+  /* wave detail panel */
+  .wave-detail{
+    margin-top:14px;background:var(--panel);border:1px solid var(--panel-line);border-radius:var(--radius);
+    padding:18px 20px;font-size:13.5px;
+  }
+  .wave-detail .wd-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;}
+  .wave-detail .wd-head h3{font-family:'Space Grotesk';font-size:16px;margin:0;font-weight:600;}
+  .wave-detail .wd-dates{display:flex;gap:16px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text-dim);}
+  .wave-detail .wd-dates b{color:var(--text);}
+  .wd-regions{display:flex;flex-wrap:wrap;gap:7px;}
+  .chip{
+    background:var(--panel-soft);border:1px solid var(--panel-line);border-radius:20px;padding:5px 12px;font-size:12px;color:var(--text-dim);
+  }
+
+  /* ===== Two-column grid ===== */
+  .grid-2{display:grid;grid-template-columns:1.35fr 1fr;gap:18px;align-items:start;}
+
+  /* Region bars */
+  .region-list{background:var(--panel);border:1px solid var(--panel-line);border-radius:var(--radius);padding:20px 22px 10px;}
+  .region-row{display:grid;grid-template-columns:150px 1fr 92px;align-items:center;gap:14px;padding:10px 0;border-bottom:1px solid var(--panel-line);}
+  .region-row:last-child{border-bottom:none;}
+  .region-row .rname{font-size:13.5px;font-weight:500;color:var(--text);}
+  .region-row .rmeta{font-size:11px;color:var(--text-faint);margin-top:2px;}
+  .bar-track{height:20px;background:var(--bg-deep);border-radius:5px;overflow:hidden;display:flex;}
+  .bar-seg{height:100%;}
+  .region-row .rfund{text-align:right;font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--text-dim);}
+  .region-row .rfund b{color:var(--text);display:block;font-size:13.5px;}
+
+  /* jenjang legend / breakdown card */
+  .side-card{background:var(--panel);border:1px solid var(--panel-line);border-radius:var(--radius);padding:20px 22px;margin-bottom:18px;}
+  .side-card h3{font-family:'Space Grotesk';font-size:14.5px;margin:0 0 14px;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:.05em;font-size:11.5px;}
+  .jenjang-row{display:flex;align-items:center;gap:10px;padding:7px 0;}
+  .jenjang-row i{width:10px;height:10px;border-radius:3px;flex:0 0 auto;}
+  .jenjang-row .jname{font-size:13px;width:56px;color:var(--text-dim);font-weight:500;}
+  .jenjang-row .jbar{flex:1;height:8px;background:var(--bg-deep);border-radius:4px;overflow:hidden;}
+  .jenjang-row .jbar span{display:block;height:100%;border-radius:4px;}
+  .jenjang-row .jval{font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--text);width:44px;text-align:right;}
+
+  .donut-wrap{display:flex;align-items:center;gap:20px;}
+  .donut-legend{flex:1;display:flex;flex-direction:column;gap:8px;}
+  .donut-legend .drow{display:flex;justify-content:space-between;font-size:12.5px;color:var(--text-dim);}
+  .donut-legend .drow span:first-child{display:flex;align-items:center;gap:8px;}
+  .donut-legend .drow i{width:9px;height:9px;border-radius:50%;}
+  .donut-legend .drow b{color:var(--text);font-family:'IBM Plex Mono',monospace;}
+
+  /* ===== Table / explorer ===== */
+  .explorer{background:var(--panel);border:1px solid var(--panel-line);border-radius:var(--radius);padding:18px 20px 8px;}
+  .explorer-controls{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;}
+  .explorer-controls input, .explorer-controls select{
+    background:var(--bg-deep);border:1px solid var(--panel-line-strong);color:var(--text);
+    border-radius:8px;padding:9px 12px;font-size:13px;font-family:'Inter';outline:none;
+  }
+  .explorer-controls input{flex:1;min-width:180px;}
+  .explorer-controls input:focus, .explorer-controls select:focus{border-color:var(--gold);}
+  .explorer-count{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--text-faint);align-self:center;margin-left:auto;white-space:nowrap;}
+
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  thead th{
+    text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-faint);
+    font-weight:600;padding:8px 10px;border-bottom:1px solid var(--panel-line-strong);position:sticky;top:0;background:var(--panel);
+  }
+  thead th.num, tbody td.num{text-align:right;}
+  tbody td{padding:9px 10px;border-bottom:1px solid var(--panel-line);color:var(--text-dim);}
+  tbody tr:hover td{background:rgba(255,255,255,0.02);color:var(--text);}
+  tbody td.cname{color:var(--text);font-weight:500;}
+  tbody td.num{font-family:'IBM Plex Mono',monospace;}
+  .table-scroll{max-height:520px;overflow-y:auto;}
+  .jtag{display:inline-block;padding:2px 7px;border-radius:5px;font-size:10.5px;font-weight:600;font-family:'IBM Plex Mono',monospace;}
+
+  footer{margin-top:40px;padding-top:20px;border-top:1px solid var(--panel-line);color:var(--text-faint);font-size:12px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+
+  @media (max-width:980px){
+    .kpi-row{grid-template-columns:repeat(2,1fr);}
+    .grid-2{grid-template-columns:1fr;}
+    .region-row{grid-template-columns:110px 1fr 76px;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .wave-card{transition:none;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div>
+      <p class="brand-eyebrow"><span class="dot"></span>Monitor Rollout &middot; Dinas Pendidikan Provinsi NTB</p>
+      <h1 class="title">Gugus Belajar <em>Kinerja Terbaik</em></h1>
+      <p class="subtitle">Pemantauan alokasi BOSP dan jadwal Bimtek (SPMI &middot; Litnum &middot; Digitalisasi) untuk satuan pendidikan calon penerima terbaik di 10 kabupaten/kota se-NTB.</p>
+    </div>
+    <div class="top-meta">
+      <div>Sumber data: <b>Referensi Gugus Belajar BOSP</b></div>
+      <div>Cakupan: <b>Agustus &ndash; September</b></div>
+      <div>Total gelombang: <b>20</b></div>
+    </div>
+  </header>
+
+  <div class="kpi-row" id="kpiRow"></div>
+
+  <section class="section">
+    <div class="section-head">
+      <h2><span class="idx">01</span>Jadwal Gelombang Bimtek</h2>
+      <p>Setiap gugus mengikuti 3 hari berurutan: SPMI &rarr; Litnum &rarr; Digitalisasi. Klik satu gelombang untuk detail wilayah &amp; gugus.</p>
+    </div>
+    <div class="wave-scroll" id="waveScroll"></div>
+    <div class="wave-legend">
+      <span><i style="background:var(--gold)"></i>Hari 1 &middot; Bimtek SPMI</span>
+      <span><i style="background:var(--teal)"></i>Hari 2 &middot; Bimtek Litnum</span>
+      <span><i style="background:var(--blue)"></i>Hari 3 &middot; Bimtek Digitalisasi</span>
+    </div>
+    <div class="wave-detail" id="waveDetail"></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <h2><span class="idx">02</span>Sebaran per Kabupaten/Kota</h2>
+      <p>Diurutkan berdasarkan jumlah satuan pendidikan dalam gugus belajar.</p>
+    </div>
+    <div class="grid-2">
+      <div class="region-list" id="regionList"></div>
+      <div>
+        <div class="side-card">
+          <h3>Alokasi per Jenis BOSP</h3>
+          <div class="donut-wrap">
+            <svg id="donutSvg" width="132" height="132" viewBox="0 0 132 132"></svg>
+            <div class="donut-legend" id="donutLegend"></div>
+          </div>
+        </div>
+        <div class="side-card">
+          <h3>Satuan Pendidikan per Jenjang</h3>
+          <div id="jenjangBars"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <h2><span class="idx">03</span>Jelajah Gugus Belajar</h2>
+      <p>187 gugus &middot; cari nama gugus, filter wilayah/jenjang/gelombang.</p>
+    </div>
+    <div class="explorer">
+      <div class="explorer-controls">
+        <input type="text" id="searchInput" placeholder="Cari nama gugus belajar…">
+        <select id="filterKab"><option value="">Semua Kab/Kota</option></select>
+        <select id="filterJenjang"><option value="">Semua Jenjang</option></select>
+        <select id="sortBy">
+          <option value="total_desc">Urutkan: Jumlah sekolah (terbanyak)</option>
+          <option value="total_asc">Urutkan: Jumlah sekolah (tersedikit)</option>
+          <option value="funding_desc">Urutkan: Alokasi (terbesar)</option>
+          <option value="gel_asc">Urutkan: Gelombang</option>
+          <option value="name_asc">Urutkan: Nama (A-Z)</option>
+        </select>
+        <span class="explorer-count" id="explorerCount"></span>
+      </div>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Gugus Belajar</th><th>Kab/Kota</th><th>Jenjang dominan</th>
+              <th class="num">Sekolah</th><th class="num">Alokasi (Rp)</th><th>Gelombang</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>Dibangun dari data referensi gugus belajar BOSP NTB &middot; angka alokasi dihitung per satuan &times; jumlah sekolah per jenjang dalam gugus.</span>
+    <span>630 satuan pendidikan &middot; 187 gugus belajar &middot; 10 kab/kota</span>
+  </footer>
+
+</div>
+
+<script id="payload-data" type="application/json">{"clusters":[{"kab":"Kabupaten Bima","cluster":"Kabupaten Bima_SMP_05","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":2},"total":2,"gelombang":"Gelombang 1","gel_num":1,"spmi":"10 Agustus","litnum":"11 Agustus","digital":"12 Agustus","funding":70000000},{"kab":"Kabupaten Bima","cluster":"Kabupaten Bima_SMP_04","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":3},"total":3,"gelombang":"Gelombang 1","gel_num":1,"spmi":"10 Agustus","litnum":"11 Agustus","digital":"12 Agustus","funding":105000000},{"kab":"Kabupaten Bima","cluster":"Kabupaten Bima_SMP_03","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":3},"total":3,"gelombang":"Gelombang 2","gel_num":2,"spmi":"11 Agustus","litnum":"12 Agustus","digital":"13 Agustus","funding":105000000},{"kab":"Kabupaten Bima","cluster":"Kabupaten Bima_SMP_02","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":3},"total":3,"gelombang":"Gelombang 2","gel_num":2,"spmi":"11 Agustus","litnum":"12 Agustus","digital":"13 Agustus","funding":105000000},{"kab":"Kabupaten Bima","cluster":"Kabupaten Bima_SMP_01","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":3},"total":3,"gelombang":"Gelombang 3","gel_num":3,"spmi":"12 Agustus","litnum":"13 Agustus","digital":"14 Agustus","funding":105000000},{"kab":"Kabupaten Bima","cluster":"Kabupaten Bima_SD_16","counts":{"PAUD":0,"PKBM":0,"SD":3,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 3","gel_num":3,"spmi":"12 Agustus","litnum":"13 Agustus","digital":"14 Agustus","funding":67500000},{"kab":"Kabupaten Bima","cluster":"Kabupaten Bima_SD_15","counts":{"PAUD":0,"PKBM":0,"SD":1,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":1,"gelombang":"Gelombang 4","gel_num":4,"spmi":"13 Agustus","litnum":"14 Agustus","digital":"15 Agustus","funding":22500000},{"kab":"Kabupaten Bima","cluster":"Kabupaten Bima_SD_14","counts":{"PAUD":0,"PKBM":0,"SD":1,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":1,"gelombang":"Gelombang 4","gel_num":4,"spmi":"13 Agustus","litnum":"14 Agustus","digital":"15 Agustus","funding":22500000},{"kab":"Kabupaten Bima","cluster":"Kabupaten Bima_SD_13","counts":{"PAUD":0,"PKBM":0,"SD":1,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":1,"gelombang":"Gelombang 5","gel_num":5,"spmi":"19 Agustus","litnum":"20 Agustus","digital":"21 Agustus","funding":22500000},{"kab":"Kabupaten Bima","cluster":"Kabupaten Bima_SD_12","counts":{"PAUD":0,"PKBM":0,"SD":2,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":2,"gelombang":"Gelombang 5","gel_num":5,"spmi":"19 Agustus","litnum":"20 Agustus","digital":"21 Agustus","funding":45000000},{"kab":"Kabupaten Bima","cluster":"Kabupaten Bima_SD_11","counts":{"PAUD":0,"PKBM":0,"SD":2,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":2,"gelombang":"Gelombang 6","gel_num":6,"spmi":"20 Agustus","litnum":"21 Agustus","digital":"22 Agustus","funding":45000000},{"kab":"Kabupaten Bima","cluster":"Kabupaten Bima_SD_10","counts":{"PAUD":0,"PKBM":0,"SD":2,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":2,"gelombang":"Gelombang 6","gel_num":6,"spmi":"20 Agustus","litnum":"21 Agustus","digital":"22 Agustus","funding":45000000},{"kab":"Kabupaten Bima","cluster":"Kabupaten Bima_SD_09","counts":{"PAUD":0,"PKBM":0,"SD":2,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":2,"gelombang":"Gelombang 7","gel_num":7,"spmi":"26 Agustus","litnum":"27 Agustus","digital":"28 Agustus","funding":45000000},{"kab":"Kabupaten Bima","cluster":"Kabupaten Bima_SD_08","counts":{"PAUD":0,"PKBM":0,"SD":3,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 7","gel_num":7,"spmi":"26 Agustus","litnum":"27 Agustus","digital":"28 Agustus","funding":67500000},{"kab":"Kabupaten Bima","cluster":"Kabupaten Bima_SD_07","counts":{"PAUD":0,"PKBM":0,"SD":4,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":4,"gelombang":"Gelombang 8","gel_num":8,"spmi":"27 Agustus","litnum":"28 Agustus","digital":"29 Agustus","funding":90000000},{"kab":"Kabupaten Bima","cluster":"Kabupaten Bima_SD_06","counts":{"PAUD":0,"PKBM":0,"SD":3,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 8","gel_num":8,"spmi":"27 Agustus","litnum":"28 Agustus","digital":"29 Agustus","funding":67500000},{"kab":"Kabupaten Bima","cluster":"Kabupaten Bima_SD_05","counts":{"PAUD":0,"PKBM":0,"SD":3,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 9","gel_num":9,"spmi":"31 Agustus","litnum":"1 September","digital":"2 September","funding":67500000},{"kab":"Kabupaten Bima","cluster":"Kabupaten Bima_SD_04","counts":{"PAUD":0,"PKBM":0,"SD":3,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 9","gel_num":9,"spmi":"31 Agustus","litnum":"1 September","digital":"2 September","funding":67500000},{"kab":"Kabupaten Bima","cluster":"Kabupaten Bima_SD_03","counts":{"PAUD":0,"PKBM":0,"SD":4,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":4,"gelombang":"Gelombang 10","gel_num":10,"spmi":"1 September","litnum":"2 September","digital":"3 September","funding":90000000},{"kab":"Kabupaten Bima","cluster":"Kabupaten Bima_SD_02","counts":{"PAUD":0,"PKBM":0,"SD":5,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":5,"gelombang":"Gelombang 10","gel_num":10,"spmi":"1 September","litnum":"2 September","digital":"3 September","funding":112500000},{"kab":"Kabupaten Bima","cluster":"Kabupaten Bima_SD_01","counts":{"PAUD":0,"PKBM":0,"SD":3,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 11","gel_num":11,"spmi":"2 September","litnum":"3 September","digital":"4 September","funding":67500000},{"kab":"Kabupaten Bima","cluster":"Kabupaten Bima_PKBM_02","counts":{"PAUD":0,"PKBM":2,"SD":0,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":2,"gelombang":"Gelombang 11","gel_num":11,"spmi":"2 September","litnum":"3 September","digital":"4 September","funding":90000000},{"kab":"Kabupaten Bima","cluster":"Kabupaten Bima_PKBM_01","counts":{"PAUD":0,"PKBM":2,"SD":0,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":2,"gelombang":"Gelombang 12","gel_num":12,"spmi":"3 September","litnum":"4 September","digital":"5 September","funding":90000000},{"kab":"Kabupaten Bima","cluster":"Kabupaten Bima_PAUD_02","counts":{"PAUD":2,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":2,"gelombang":"Gelombang 12","gel_num":12,"spmi":"3 September","litnum":"4 September","digital":"5 September","funding":33000000},{"kab":"Kabupaten Bima","cluster":"Kabupaten Bima_PAUD_01","counts":{"PAUD":3,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 13","gel_num":13,"spmi":"7 September","litnum":"8 September","digital":"9 September","funding":49500000},{"kab":"Kabupaten Bima","cluster":"Kabupaten Bima_Dikmen_03","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":1,"SMA":2,"SMK":2,"SMP":0},"total":5,"gelombang":"Gelombang 13","gel_num":13,"spmi":"7 September","litnum":"8 September","digital":"9 September","funding":216250000},{"kab":"Kabupaten Bima","cluster":"Kabupaten Bima_Dikmen_02","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":3,"SMK":1,"SMP":0},"total":4,"gelombang":"Gelombang 14","gel_num":14,"spmi":"8 September","litnum":"9 September","digital":"10 September","funding":180000000},{"kab":"Kabupaten Bima","cluster":"Kabupaten Bima_Dikmen_01","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":2,"SMK":1,"SMP":0},"total":3,"gelombang":"Gelombang 14","gel_num":14,"spmi":"8 September","litnum":"9 September","digital":"10 September","funding":135000000},{"kab":"Kabupaten Dompu","cluster":"Kabupaten Dompu_SMP_02","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":4},"total":4,"gelombang":"Gelombang 1","gel_num":1,"spmi":"10 Agustus","litnum":"11 Agustus","digital":"12 Agustus","funding":140000000},{"kab":"Kabupaten Dompu","cluster":"Kabupaten Dompu_SMP_01","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":3},"total":3,"gelombang":"Gelombang 1","gel_num":1,"spmi":"10 Agustus","litnum":"11 Agustus","digital":"12 Agustus","funding":105000000},{"kab":"Kabupaten Dompu","cluster":"Kabupaten Dompu_SD_07","counts":{"PAUD":0,"PKBM":0,"SD":5,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":5,"gelombang":"Gelombang 2","gel_num":2,"spmi":"11 Agustus","litnum":"12 Agustus","digital":"13 Agustus","funding":112500000},{"kab":"Kabupaten Dompu","cluster":"Kabupaten Dompu_SD_06","counts":{"PAUD":0,"PKBM":0,"SD":3,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 2","gel_num":2,"spmi":"11 Agustus","litnum":"12 Agustus","digital":"13 Agustus","funding":67500000},{"kab":"Kabupaten Dompu","cluster":"Kabupaten Dompu_SD_05","counts":{"PAUD":0,"PKBM":0,"SD":3,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 3","gel_num":3,"spmi":"12 Agustus","litnum":"13 Agustus","digital":"14 Agustus","funding":67500000},{"kab":"Kabupaten Dompu","cluster":"Kabupaten Dompu_SD_04","counts":{"PAUD":0,"PKBM":0,"SD":3,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 3","gel_num":3,"spmi":"12 Agustus","litnum":"13 Agustus","digital":"14 Agustus","funding":67500000},{"kab":"Kabupaten Dompu","cluster":"Kabupaten Dompu_SD_03","counts":{"PAUD":0,"PKBM":0,"SD":3,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 4","gel_num":4,"spmi":"13 Agustus","litnum":"14 Agustus","digital":"15 Agustus","funding":67500000},{"kab":"Kabupaten Dompu","cluster":"Kabupaten Dompu_SD_02","counts":{"PAUD":0,"PKBM":0,"SD":3,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 4","gel_num":4,"spmi":"13 Agustus","litnum":"14 Agustus","digital":"15 Agustus","funding":67500000},{"kab":"Kabupaten Dompu","cluster":"Kabupaten Dompu_SD_01","counts":{"PAUD":0,"PKBM":0,"SD":3,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 5","gel_num":5,"spmi":"19 Agustus","litnum":"20 Agustus","digital":"21 Agustus","funding":67500000},{"kab":"Kabupaten Dompu","cluster":"Kabupaten Dompu_PKBM_02","counts":{"PAUD":0,"PKBM":4,"SD":0,"SKB":1,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":5,"gelombang":"Gelombang 5","gel_num":5,"spmi":"19 Agustus","litnum":"20 Agustus","digital":"21 Agustus","funding":225000000},{"kab":"Kabupaten Dompu","cluster":"Kabupaten Dompu_PAUD_01","counts":{"PAUD":5,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":5,"gelombang":"Gelombang 6","gel_num":6,"spmi":"20 Agustus","litnum":"21 Agustus","digital":"22 Agustus","funding":82500000},{"kab":"Kabupaten Dompu","cluster":"Kabupaten Dompu_Dikmen_03","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":2,"SMK":1,"SMP":0},"total":3,"gelombang":"Gelombang 6","gel_num":6,"spmi":"20 Agustus","litnum":"21 Agustus","digital":"22 Agustus","funding":135000000},{"kab":"Kabupaten Dompu","cluster":"Kabupaten Dompu_Dikmen_02","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":0,"SMK":3,"SMP":0},"total":3,"gelombang":"Gelombang 7","gel_num":7,"spmi":"26 Agustus","litnum":"27 Agustus","digital":"28 Agustus","funding":135000000},{"kab":"Kabupaten Dompu","cluster":"Kabupaten Dompu_Dikmen_01","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":1,"SMA":2,"SMK":1,"SMP":0},"total":4,"gelombang":"Gelombang 7","gel_num":7,"spmi":"26 Agustus","litnum":"27 Agustus","digital":"28 Agustus","funding":171250000},{"kab":"Kabupaten Lombok Barat","cluster":"Kabupaten Lombok Barat_Dikmen_02","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":0,"SMK":3,"SMP":0},"total":3,"gelombang":"Gelombang 1","gel_num":1,"spmi":"10 Agustus","litnum":"11 Agustus","digital":"12 Agustus","funding":135000000},{"kab":"Kabupaten Lombok Barat","cluster":"Kabupaten Lombok Barat_Dikmen_01","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":1,"SMK":2,"SMP":0},"total":3,"gelombang":"Gelombang 1","gel_num":1,"spmi":"10 Agustus","litnum":"11 Agustus","digital":"12 Agustus","funding":135000000},{"kab":"Kabupaten Lombok Barat","cluster":"KAB. LOMBOK BARAT_SMP_02","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":6},"total":6,"gelombang":"Gelombang 2","gel_num":2,"spmi":"11 Agustus","litnum":"12 Agustus","digital":"13 Agustus","funding":210000000},{"kab":"Kabupaten Lombok Barat","cluster":"KAB. LOMBOK BARAT_SMP_01","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":6},"total":6,"gelombang":"Gelombang 2","gel_num":2,"spmi":"11 Agustus","litnum":"12 Agustus","digital":"13 Agustus","funding":210000000},{"kab":"Kabupaten Lombok Barat","cluster":"KAB. LOMBOK BARAT_SD_06","counts":{"PAUD":0,"PKBM":0,"SD":7,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":7,"gelombang":"Gelombang 3","gel_num":3,"spmi":"12 Agustus","litnum":"13 Agustus","digital":"14 Agustus","funding":157500000},{"kab":"Kabupaten Lombok Barat","cluster":"KAB. LOMBOK BARAT_SD_05","counts":{"PAUD":0,"PKBM":0,"SD":7,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":7,"gelombang":"Gelombang 3","gel_num":3,"spmi":"12 Agustus","litnum":"13 Agustus","digital":"14 Agustus","funding":157500000},{"kab":"Kabupaten Lombok Barat","cluster":"KAB. LOMBOK BARAT_SD_04","counts":{"PAUD":0,"PKBM":0,"SD":6,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":6,"gelombang":"Gelombang 4","gel_num":4,"spmi":"13 Agustus","litnum":"14 Agustus","digital":"15 Agustus","funding":135000000},{"kab":"Kabupaten Lombok Barat","cluster":"KAB. LOMBOK BARAT_SD_03","counts":{"PAUD":0,"PKBM":0,"SD":6,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":6,"gelombang":"Gelombang 4","gel_num":4,"spmi":"13 Agustus","litnum":"14 Agustus","digital":"15 Agustus","funding":135000000},{"kab":"Kabupaten Lombok Barat","cluster":"KAB. LOMBOK BARAT_SD_02","counts":{"PAUD":0,"PKBM":0,"SD":6,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":6,"gelombang":"Gelombang 5","gel_num":5,"spmi":"19 Agustus","litnum":"20 Agustus","digital":"21 Agustus","funding":135000000},{"kab":"Kabupaten Lombok Barat","cluster":"KAB. LOMBOK BARAT_SD_01","counts":{"PAUD":0,"PKBM":0,"SD":6,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":6,"gelombang":"Gelombang 5","gel_num":5,"spmi":"19 Agustus","litnum":"20 Agustus","digital":"21 Agustus","funding":135000000},{"kab":"Kabupaten Lombok Barat","cluster":"KAB. LOMBOK BARAT_PKBM_01","counts":{"PAUD":0,"PKBM":4,"SD":0,"SKB":1,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":5,"gelombang":"Gelombang 6","gel_num":6,"spmi":"20 Agustus","litnum":"21 Agustus","digital":"22 Agustus","funding":225000000},{"kab":"Kabupaten Lombok Barat","cluster":"KAB. LOMBOK BARAT_PAUD_01","counts":{"PAUD":5,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":5,"gelombang":"Gelombang 6","gel_num":6,"spmi":"20 Agustus","litnum":"21 Agustus","digital":"22 Agustus","funding":82500000},{"kab":"Kabupaten Lombok Tengah","cluster":"Kabupaten Lombok Tengah_SMP_04","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":5},"total":5,"gelombang":"Gelombang 1","gel_num":1,"spmi":"10 Agustus","litnum":"11 Agustus","digital":"12 Agustus","funding":175000000},{"kab":"Kabupaten Lombok Tengah","cluster":"Kabupaten Lombok Tengah_SMP_03","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":5},"total":5,"gelombang":"Gelombang 1","gel_num":1,"spmi":"10 Agustus","litnum":"11 Agustus","digital":"12 Agustus","funding":175000000},{"kab":"Kabupaten Lombok Tengah","cluster":"Kabupaten Lombok Tengah_SMP_02","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":6},"total":6,"gelombang":"Gelombang 2","gel_num":2,"spmi":"11 Agustus","litnum":"12 Agustus","digital":"13 Agustus","funding":210000000},{"kab":"Kabupaten Lombok Tengah","cluster":"Kabupaten Lombok Tengah_SMP_01","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":7},"total":7,"gelombang":"Gelombang 2","gel_num":2,"spmi":"11 Agustus","litnum":"12 Agustus","digital":"13 Agustus","funding":245000000},{"kab":"Kabupaten Lombok Tengah","cluster":"Kabupaten Lombok Tengah_SD_10","counts":{"PAUD":0,"PKBM":0,"SD":6,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":6,"gelombang":"Gelombang 3","gel_num":3,"spmi":"12 Agustus","litnum":"13 Agustus","digital":"14 Agustus","funding":135000000},{"kab":"Kabupaten Lombok Tengah","cluster":"Kabupaten Lombok Tengah_SD_09","counts":{"PAUD":0,"PKBM":0,"SD":7,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":7,"gelombang":"Gelombang 3","gel_num":3,"spmi":"12 Agustus","litnum":"13 Agustus","digital":"14 Agustus","funding":157500000},{"kab":"Kabupaten Lombok Tengah","cluster":"Kabupaten Lombok Tengah_SD_08","counts":{"PAUD":0,"PKBM":0,"SD":7,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":7,"gelombang":"Gelombang 4","gel_num":4,"spmi":"13 Agustus","litnum":"14 Agustus","digital":"15 Agustus","funding":157500000},{"kab":"Kabupaten Lombok Tengah","cluster":"Kabupaten Lombok Tengah_SD_07","counts":{"PAUD":0,"PKBM":0,"SD":6,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":6,"gelombang":"Gelombang 4","gel_num":4,"spmi":"13 Agustus","litnum":"14 Agustus","digital":"15 Agustus","funding":135000000},{"kab":"Kabupaten Lombok Tengah","cluster":"Kabupaten Lombok Tengah_SD_06","counts":{"PAUD":0,"PKBM":0,"SD":7,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":7,"gelombang":"Gelombang 5","gel_num":5,"spmi":"19 Agustus","litnum":"20 Agustus","digital":"21 Agustus","funding":157500000},{"kab":"Kabupaten Lombok Tengah","cluster":"Kabupaten Lombok Tengah_SD_05","counts":{"PAUD":0,"PKBM":0,"SD":8,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":8,"gelombang":"Gelombang 5","gel_num":5,"spmi":"19 Agustus","litnum":"20 Agustus","digital":"21 Agustus","funding":180000000},{"kab":"Kabupaten Lombok Tengah","cluster":"Kabupaten Lombok Tengah_SD_04","counts":{"PAUD":0,"PKBM":0,"SD":5,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":5,"gelombang":"Gelombang 6","gel_num":6,"spmi":"20 Agustus","litnum":"21 Agustus","digital":"22 Agustus","funding":112500000},{"kab":"Kabupaten Lombok Tengah","cluster":"Kabupaten Lombok Tengah_SD_03","counts":{"PAUD":0,"PKBM":0,"SD":4,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":4,"gelombang":"Gelombang 6","gel_num":6,"spmi":"20 Agustus","litnum":"21 Agustus","digital":"22 Agustus","funding":90000000},{"kab":"Kabupaten Lombok Tengah","cluster":"Kabupaten Lombok Tengah_SD_02","counts":{"PAUD":0,"PKBM":0,"SD":7,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":7,"gelombang":"Gelombang 7","gel_num":7,"spmi":"26 Agustus","litnum":"27 Agustus","digital":"28 Agustus","funding":157500000},{"kab":"Kabupaten Lombok Tengah","cluster":"Kabupaten Lombok Tengah_SD_01","counts":{"PAUD":0,"PKBM":0,"SD":7,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":7,"gelombang":"Gelombang 7","gel_num":7,"spmi":"26 Agustus","litnum":"27 Agustus","digital":"28 Agustus","funding":157500000},{"kab":"Kabupaten Lombok Tengah","cluster":"Kabupaten Lombok Tengah_Dikmen_04","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":1,"SMK":1,"SMP":0},"total":2,"gelombang":"Gelombang 8","gel_num":8,"spmi":"27 Agustus","litnum":"28 Agustus","digital":"29 Agustus","funding":90000000},{"kab":"Kabupaten Lombok Tengah","cluster":"Kabupaten Lombok Tengah_Dikmen_03","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":1,"SMA":0,"SMK":1,"SMP":0},"total":2,"gelombang":"Gelombang 8","gel_num":8,"spmi":"27 Agustus","litnum":"28 Agustus","digital":"29 Agustus","funding":81250000},{"kab":"Kabupaten Lombok Tengah","cluster":"Kabupaten Lombok Tengah_Dikmen_02","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":1,"SMA":0,"SMK":1,"SMP":0},"total":2,"gelombang":"Gelombang 9","gel_num":9,"spmi":"31 Agustus","litnum":"1 September","digital":"2 September","funding":81250000},{"kab":"Kabupaten Lombok Tengah","cluster":"Kabupaten Lombok Tengah_Dikmen_01","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":1,"SMK":4,"SMP":0},"total":5,"gelombang":"Gelombang 9","gel_num":9,"spmi":"31 Agustus","litnum":"1 September","digital":"2 September","funding":225000000},{"kab":"Kabupaten Lombok Tengah","cluster":"Gugus Belajar_Kabupaten Lombok Tengah_0","counts":{"PAUD":0,"PKBM":4,"SD":0,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":4,"gelombang":"Gelombang 10","gel_num":10,"spmi":"1 September","litnum":"2 September","digital":"3 September","funding":180000000},{"kab":"Kabupaten Lombok Tengah","cluster":"Gugus Belajar_Kabupaten Lombok Tengah","counts":{"PAUD":5,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":5,"gelombang":"Gelombang 10","gel_num":10,"spmi":"1 September","litnum":"2 September","digital":"3 September","funding":82500000},{"kab":"Kabupaten Lombok Timur","cluster":"Kabupaten Lombok Timur_SMP_10","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":3},"total":3,"gelombang":"Gelombang 1","gel_num":1,"spmi":"10 Agustus","litnum":"11 Agustus","digital":"12 Agustus","funding":105000000},{"kab":"Kabupaten Lombok Timur","cluster":"Kabupaten Lombok Timur_SMP_09","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":3},"total":3,"gelombang":"Gelombang 1","gel_num":1,"spmi":"10 Agustus","litnum":"11 Agustus","digital":"12 Agustus","funding":105000000},{"kab":"Kabupaten Lombok Timur","cluster":"Kabupaten Lombok Timur_SMP_08","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":3},"total":3,"gelombang":"Gelombang 2","gel_num":2,"spmi":"11 Agustus","litnum":"12 Agustus","digital":"13 Agustus","funding":105000000},{"kab":"Kabupaten Lombok Timur","cluster":"Kabupaten Lombok Timur_SMP_07","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":3},"total":3,"gelombang":"Gelombang 2","gel_num":2,"spmi":"11 Agustus","litnum":"12 Agustus","digital":"13 Agustus","funding":105000000},{"kab":"Kabupaten Lombok Timur","cluster":"Kabupaten Lombok Timur_SMP_06","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":3},"total":3,"gelombang":"Gelombang 3","gel_num":3,"spmi":"12 Agustus","litnum":"13 Agustus","digital":"14 Agustus","funding":105000000},{"kab":"Kabupaten Lombok Timur","cluster":"Kabupaten Lombok Timur_SMP_05","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":3},"total":3,"gelombang":"Gelombang 3","gel_num":3,"spmi":"12 Agustus","litnum":"13 Agustus","digital":"14 Agustus","funding":105000000},{"kab":"Kabupaten Lombok Timur","cluster":"Kabupaten Lombok Timur_SMP_04","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":3},"total":3,"gelombang":"Gelombang 4","gel_num":4,"spmi":"13 Agustus","litnum":"14 Agustus","digital":"15 Agustus","funding":105000000},{"kab":"Kabupaten Lombok Timur","cluster":"Kabupaten Lombok Timur_SMP_03","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":3},"total":3,"gelombang":"Gelombang 4","gel_num":4,"spmi":"13 Agustus","litnum":"14 Agustus","digital":"15 Agustus","funding":105000000},{"kab":"Kabupaten Lombok Timur","cluster":"Kabupaten Lombok Timur_SMP_02","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":3},"total":3,"gelombang":"Gelombang 5","gel_num":5,"spmi":"19 Agustus","litnum":"20 Agustus","digital":"21 Agustus","funding":105000000},{"kab":"Kabupaten Lombok Timur","cluster":"Kabupaten Lombok Timur_SMP_01","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":3},"total":3,"gelombang":"Gelombang 5","gel_num":5,"spmi":"19 Agustus","litnum":"20 Agustus","digital":"21 Agustus","funding":105000000},{"kab":"Kabupaten Lombok Timur","cluster":"Kabupaten Lombok Timur_SD_26","counts":{"PAUD":0,"PKBM":0,"SD":3,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 6","gel_num":6,"spmi":"20 Agustus","litnum":"21 Agustus","digital":"22 Agustus","funding":67500000},{"kab":"Kabupaten Lombok Timur","cluster":"Kabupaten Lombok Timur_SD_25","counts":{"PAUD":0,"PKBM":0,"SD":3,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 6","gel_num":6,"spmi":"20 Agustus","litnum":"21 Agustus","digital":"22 Agustus","funding":67500000},{"kab":"Kabupaten Lombok Timur","cluster":"Kabupaten Lombok Timur_SD_24","counts":{"PAUD":0,"PKBM":0,"SD":3,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 7","gel_num":7,"spmi":"26 Agustus","litnum":"27 Agustus","digital":"28 Agustus","funding":67500000},{"kab":"Kabupaten Lombok Timur","cluster":"Kabupaten Lombok Timur_SD_23","counts":{"PAUD":0,"PKBM":0,"SD":3,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 7","gel_num":7,"spmi":"26 Agustus","litnum":"27 Agustus","digital":"28 Agustus","funding":67500000},{"kab":"Kabupaten Lombok Timur","cluster":"Kabupaten Lombok Timur_SD_22","counts":{"PAUD":0,"PKBM":0,"SD":3,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 8","gel_num":8,"spmi":"27 Agustus","litnum":"28 Agustus","digital":"29 Agustus","funding":67500000},{"kab":"Kabupaten Lombok Timur","cluster":"Kabupaten Lombok Timur_SD_21","counts":{"PAUD":0,"PKBM":0,"SD":3,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 8","gel_num":8,"spmi":"27 Agustus","litnum":"28 Agustus","digital":"29 Agustus","funding":67500000},{"kab":"Kabupaten Lombok Timur","cluster":"Kabupaten Lombok Timur_SD_20","counts":{"PAUD":0,"PKBM":0,"SD":3,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 9","gel_num":9,"spmi":"31 Agustus","litnum":"1 September","digital":"2 September","funding":67500000},{"kab":"Kabupaten Lombok Timur","cluster":"Kabupaten Lombok Timur_SD_19","counts":{"PAUD":0,"PKBM":0,"SD":3,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 9","gel_num":9,"spmi":"31 Agustus","litnum":"1 September","digital":"2 September","funding":67500000},{"kab":"Kabupaten Lombok Timur","cluster":"Kabupaten Lombok Timur_SD_18","counts":{"PAUD":0,"PKBM":0,"SD":3,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 10","gel_num":10,"spmi":"1 September","litnum":"2 September","digital":"3 September","funding":67500000},{"kab":"Kabupaten Lombok Timur","cluster":"Kabupaten Lombok Timur_SD_17","counts":{"PAUD":0,"PKBM":0,"SD":3,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 10","gel_num":10,"spmi":"1 September","litnum":"2 September","digital":"3 September","funding":67500000},{"kab":"Kabupaten Lombok Timur","cluster":"Kabupaten Lombok Timur_SD_16","counts":{"PAUD":0,"PKBM":0,"SD":3,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 11","gel_num":11,"spmi":"2 September","litnum":"3 September","digital":"4 September","funding":67500000},{"kab":"Kabupaten Lombok Timur","cluster":"Kabupaten Lombok Timur_SD_15","counts":{"PAUD":0,"PKBM":0,"SD":3,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 11","gel_num":11,"spmi":"2 September","litnum":"3 September","digital":"4 September","funding":67500000},{"kab":"Kabupaten Lombok Timur","cluster":"Kabupaten Lombok Timur_SD_14","counts":{"PAUD":0,"PKBM":0,"SD":3,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 12","gel_num":12,"spmi":"3 September","litnum":"4 September","digital":"5 September","funding":67500000},{"kab":"Kabupaten Lombok Timur","cluster":"Kabupaten Lombok Timur_SD_13","counts":{"PAUD":0,"PKBM":0,"SD":3,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 12","gel_num":12,"spmi":"3 September","litnum":"4 September","digital":"5 September","funding":67500000},{"kab":"Kabupaten Lombok Timur","cluster":"Kabupaten Lombok Timur_SD_12","counts":{"PAUD":0,"PKBM":0,"SD":3,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 13","gel_num":13,"spmi":"7 September","litnum":"8 September","digital":"9 September","funding":67500000},{"kab":"Kabupaten Lombok Timur","cluster":"Kabupaten Lombok Timur_SD_11","counts":{"PAUD":0,"PKBM":0,"SD":3,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 13","gel_num":13,"spmi":"7 September","litnum":"8 September","digital":"9 September","funding":67500000},{"kab":"Kabupaten Lombok Timur","cluster":"Kabupaten Lombok Timur_SD_10","counts":{"PAUD":0,"PKBM":0,"SD":3,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 14","gel_num":14,"spmi":"8 September","litnum":"9 September","digital":"10 September","funding":67500000},{"kab":"Kabupaten Lombok Timur","cluster":"Kabupaten Lombok Timur_SD_09","counts":{"PAUD":0,"PKBM":0,"SD":3,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 14","gel_num":14,"spmi":"8 September","litnum":"9 September","digital":"10 September","funding":67500000},{"kab":"Kabupaten Lombok Timur","cluster":"Kabupaten Lombok Timur_SD_08","counts":{"PAUD":0,"PKBM":0,"SD":3,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 15","gel_num":15,"spmi":"9 September","litnum":"10 September","digital":"11 September","funding":67500000},{"kab":"Kabupaten Lombok Timur","cluster":"Kabupaten Lombok Timur_SD_07","counts":{"PAUD":0,"PKBM":0,"SD":3,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 15","gel_num":15,"spmi":"9 September","litnum":"10 September","digital":"11 September","funding":67500000},{"kab":"Kabupaten Lombok Timur","cluster":"Kabupaten Lombok Timur_SD_06","counts":{"PAUD":0,"PKBM":0,"SD":4,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":4,"gelombang":"Gelombang 16","gel_num":16,"spmi":"10 September","litnum":"11 September","digital":"12 September","funding":90000000},{"kab":"Kabupaten Lombok Timur","cluster":"Kabupaten Lombok Timur_SD_05","counts":{"PAUD":0,"PKBM":0,"SD":3,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 16","gel_num":16,"spmi":"10 September","litnum":"11 September","digital":"12 September","funding":67500000},{"kab":"Kabupaten Lombok Timur","cluster":"Kabupaten Lombok Timur_SD_04","counts":{"PAUD":0,"PKBM":0,"SD":3,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 17","gel_num":17,"spmi":"14 September","litnum":"15 September","digital":"16 September","funding":67500000},{"kab":"Kabupaten Lombok Timur","cluster":"Kabupaten Lombok Timur_SD_03","counts":{"PAUD":0,"PKBM":0,"SD":3,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 17","gel_num":17,"spmi":"14 September","litnum":"15 September","digital":"16 September","funding":67500000},{"kab":"Kabupaten Lombok Timur","cluster":"Kabupaten Lombok Timur_SD_02","counts":{"PAUD":0,"PKBM":0,"SD":3,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 18","gel_num":18,"spmi":"15 September","litnum":"16 September","digital":"17 September","funding":67500000},{"kab":"Kabupaten Lombok Timur","cluster":"Kabupaten Lombok Timur_SD_01","counts":{"PAUD":0,"PKBM":0,"SD":3,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 18","gel_num":18,"spmi":"15 September","litnum":"16 September","digital":"17 September","funding":67500000},{"kab":"Kabupaten Lombok Timur","cluster":"Kabupaten Lombok Timur_PKBM_01","counts":{"PAUD":0,"PKBM":5,"SD":0,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":5,"gelombang":"Gelombang 19","gel_num":19,"spmi":"16 September","litnum":"17 September","digital":"18 September","funding":225000000},{"kab":"Kabupaten Lombok Timur","cluster":"Kabupaten Lombok Timur_PAUD_01","counts":{"PAUD":5,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":5,"gelombang":"Gelombang 19","gel_num":19,"spmi":"16 September","litnum":"17 September","digital":"18 September","funding":82500000},{"kab":"Kabupaten Lombok Timur","cluster":"Kabupaten Lombok Timur_Dikmen_03","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":1,"SMK":1,"SMP":0},"total":2,"gelombang":"Gelombang 20","gel_num":20,"spmi":"17 September","litnum":"18 September","digital":"19 September","funding":90000000},{"kab":"Kabupaten Lombok Timur","cluster":"Kabupaten Lombok Timur_Dikmen_02","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":2,"SMK":2,"SMP":0},"total":4,"gelombang":"Gelombang 20","gel_num":20,"spmi":"17 September","litnum":"18 September","digital":"19 September","funding":180000000},{"kab":"Kabupaten Lombok Timur","cluster":"Kabupaten Lombok Timur_Dikmen_01","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":2,"SMK":4,"SMP":0},"total":6,"gelombang":"Gelombang 20","gel_num":20,"spmi":"17 September","litnum":"18 September","digital":"19 September","funding":270000000},{"kab":"Kabupaten Lombok Utara","cluster":"Kabupaten Lombok Utara_SMP_02","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":2},"total":2,"gelombang":"Gelombang 1","gel_num":1,"spmi":"10 Agustus","litnum":"11 Agustus","digital":"12 Agustus","funding":70000000},{"kab":"Kabupaten Lombok Utara","cluster":"Kabupaten Lombok Utara_SMP_01","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":3},"total":3,"gelombang":"Gelombang 1","gel_num":1,"spmi":"10 Agustus","litnum":"11 Agustus","digital":"12 Agustus","funding":105000000},{"kab":"Kabupaten Lombok Utara","cluster":"Kabupaten Lombok Utara_SD_06","counts":{"PAUD":0,"PKBM":0,"SD":3,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 2","gel_num":2,"spmi":"11 Agustus","litnum":"12 Agustus","digital":"13 Agustus","funding":67500000},{"kab":"Kabupaten Lombok Utara","cluster":"Kabupaten Lombok Utara_SD_05","counts":{"PAUD":0,"PKBM":0,"SD":2,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":2,"gelombang":"Gelombang 2","gel_num":2,"spmi":"11 Agustus","litnum":"12 Agustus","digital":"13 Agustus","funding":45000000},{"kab":"Kabupaten Lombok Utara","cluster":"Kabupaten Lombok Utara_SD_04","counts":{"PAUD":0,"PKBM":0,"SD":3,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 3","gel_num":3,"spmi":"12 Agustus","litnum":"13 Agustus","digital":"14 Agustus","funding":67500000},{"kab":"Kabupaten Lombok Utara","cluster":"Kabupaten Lombok Utara_SD_03","counts":{"PAUD":0,"PKBM":0,"SD":3,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 3","gel_num":3,"spmi":"12 Agustus","litnum":"13 Agustus","digital":"14 Agustus","funding":67500000},{"kab":"Kabupaten Lombok Utara","cluster":"Kabupaten Lombok Utara_SD_02","counts":{"PAUD":0,"PKBM":0,"SD":3,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 4","gel_num":4,"spmi":"13 Agustus","litnum":"14 Agustus","digital":"15 Agustus","funding":67500000},{"kab":"Kabupaten Lombok Utara","cluster":"Kabupaten Lombok Utara_SD_01","counts":{"PAUD":0,"PKBM":0,"SD":3,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 4","gel_num":4,"spmi":"13 Agustus","litnum":"14 Agustus","digital":"15 Agustus","funding":67500000},{"kab":"Kabupaten Lombok Utara","cluster":"Kabupaten Lombok Utara_PKBM_02","counts":{"PAUD":0,"PKBM":1,"SD":0,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":1,"gelombang":"Gelombang 5","gel_num":5,"spmi":"19 Agustus","litnum":"20 Agustus","digital":"21 Agustus","funding":45000000},{"kab":"Kabupaten Lombok Utara","cluster":"Kabupaten Lombok Utara_PKBM_01","counts":{"PAUD":0,"PKBM":1,"SD":0,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":1,"gelombang":"Gelombang 5","gel_num":5,"spmi":"19 Agustus","litnum":"20 Agustus","digital":"21 Agustus","funding":45000000},{"kab":"Kabupaten Lombok Utara","cluster":"Kabupaten Lombok Utara_PAUD_01","counts":{"PAUD":5,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":5,"gelombang":"Gelombang 6","gel_num":6,"spmi":"20 Agustus","litnum":"21 Agustus","digital":"22 Agustus","funding":82500000},{"kab":"Kabupaten Lombok Utara","cluster":"Kabupaten Lombok Utara_Dikmen_01","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":1,"SMK":0,"SMP":0},"total":1,"gelombang":"Gelombang 6","gel_num":6,"spmi":"20 Agustus","litnum":"21 Agustus","digital":"22 Agustus","funding":45000000},{"kab":"Kabupaten Sumbawa","cluster":"Kabupaten Sumbawa_SMP_04","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":2},"total":2,"gelombang":"Gelombang 1","gel_num":1,"spmi":"10 Agustus","litnum":"11 Agustus","digital":"12 Agustus","funding":70000000},{"kab":"Kabupaten Sumbawa","cluster":"Kabupaten Sumbawa_SMP_03","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":2},"total":2,"gelombang":"Gelombang 1","gel_num":1,"spmi":"10 Agustus","litnum":"11 Agustus","digital":"12 Agustus","funding":70000000},{"kab":"Kabupaten Sumbawa","cluster":"Kabupaten Sumbawa_SMP_02","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":5},"total":5,"gelombang":"Gelombang 2","gel_num":2,"spmi":"11 Agustus","litnum":"12 Agustus","digital":"13 Agustus","funding":175000000},{"kab":"Kabupaten Sumbawa","cluster":"Kabupaten Sumbawa_SMP_01","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":3},"total":3,"gelombang":"Gelombang 2","gel_num":2,"spmi":"11 Agustus","litnum":"12 Agustus","digital":"13 Agustus","funding":105000000},{"kab":"Kabupaten Sumbawa","cluster":"Kabupaten Sumbawa_SD_12","counts":{"PAUD":0,"PKBM":0,"SD":4,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":4,"gelombang":"Gelombang 3","gel_num":3,"spmi":"12 Agustus","litnum":"13 Agustus","digital":"14 Agustus","funding":90000000},{"kab":"Kabupaten Sumbawa","cluster":"Kabupaten Sumbawa_SD_11","counts":{"PAUD":0,"PKBM":0,"SD":3,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 3","gel_num":3,"spmi":"12 Agustus","litnum":"13 Agustus","digital":"14 Agustus","funding":67500000},{"kab":"Kabupaten Sumbawa","cluster":"Kabupaten Sumbawa_SD_10","counts":{"PAUD":0,"PKBM":0,"SD":3,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 4","gel_num":4,"spmi":"13 Agustus","litnum":"14 Agustus","digital":"15 Agustus","funding":67500000},{"kab":"Kabupaten Sumbawa","cluster":"Kabupaten Sumbawa_SD_09b","counts":{"PAUD":0,"PKBM":0,"SD":1,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":1,"gelombang":"Gelombang 4","gel_num":4,"spmi":"13 Agustus","litnum":"14 Agustus","digital":"15 Agustus","funding":22500000},{"kab":"Kabupaten Sumbawa","cluster":"Kabupaten Sumbawa_SD_09","counts":{"PAUD":0,"PKBM":0,"SD":2,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":2,"gelombang":"Gelombang 5","gel_num":5,"spmi":"19 Agustus","litnum":"20 Agustus","digital":"21 Agustus","funding":45000000},{"kab":"Kabupaten Sumbawa","cluster":"Kabupaten Sumbawa_SD_08","counts":{"PAUD":0,"PKBM":0,"SD":3,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 5","gel_num":5,"spmi":"19 Agustus","litnum":"20 Agustus","digital":"21 Agustus","funding":67500000},{"kab":"Kabupaten Sumbawa","cluster":"Kabupaten Sumbawa_SD_07","counts":{"PAUD":0,"PKBM":0,"SD":4,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":4,"gelombang":"Gelombang 6","gel_num":6,"spmi":"20 Agustus","litnum":"21 Agustus","digital":"22 Agustus","funding":90000000},{"kab":"Kabupaten Sumbawa","cluster":"Kabupaten Sumbawa_SD_06","counts":{"PAUD":0,"PKBM":0,"SD":4,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":4,"gelombang":"Gelombang 6","gel_num":6,"spmi":"20 Agustus","litnum":"21 Agustus","digital":"22 Agustus","funding":90000000},{"kab":"Kabupaten Sumbawa","cluster":"Kabupaten Sumbawa_SD_05","counts":{"PAUD":0,"PKBM":0,"SD":3,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 7","gel_num":7,"spmi":"26 Agustus","litnum":"27 Agustus","digital":"28 Agustus","funding":67500000},{"kab":"Kabupaten Sumbawa","cluster":"Kabupaten Sumbawa_SD_04","counts":{"PAUD":0,"PKBM":0,"SD":3,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 7","gel_num":7,"spmi":"26 Agustus","litnum":"27 Agustus","digital":"28 Agustus","funding":67500000},{"kab":"Kabupaten Sumbawa","cluster":"Kabupaten Sumbawa_SD_02","counts":{"PAUD":0,"PKBM":0,"SD":3,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 8","gel_num":8,"spmi":"27 Agustus","litnum":"28 Agustus","digital":"29 Agustus","funding":67500000},{"kab":"Kabupaten Sumbawa","cluster":"Kabupaten Sumbawa_SD_01","counts":{"PAUD":0,"PKBM":0,"SD":5,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":5,"gelombang":"Gelombang 8","gel_num":8,"spmi":"27 Agustus","litnum":"28 Agustus","digital":"29 Agustus","funding":112500000},{"kab":"Kabupaten Sumbawa","cluster":"Kabupaten Sumbawa_PKBM_01","counts":{"PAUD":0,"PKBM":4,"SD":0,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":4,"gelombang":"Gelombang 9","gel_num":9,"spmi":"31 Agustus","litnum":"1 September","digital":"2 September","funding":180000000},{"kab":"Kabupaten Sumbawa","cluster":"Kabupaten Sumbawa_PAUD_01","counts":{"PAUD":5,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":5,"gelombang":"Gelombang 9","gel_num":9,"spmi":"31 Agustus","litnum":"1 September","digital":"2 September","funding":82500000},{"kab":"Kabupaten Sumbawa","cluster":"Kabupaten Sumbawa_Dikmen_05","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":1,"SMA":2,"SMK":1,"SMP":0},"total":4,"gelombang":"Gelombang 10","gel_num":10,"spmi":"1 September","litnum":"2 September","digital":"3 September","funding":171250000},{"kab":"Kabupaten Sumbawa","cluster":"Kabupaten Sumbawa_Dikmen_04","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":2,"SMK":1,"SMP":0},"total":3,"gelombang":"Gelombang 10","gel_num":10,"spmi":"1 September","litnum":"2 September","digital":"3 September","funding":135000000},{"kab":"Kabupaten Sumbawa","cluster":"Kabupaten Sumbawa_Dikmen_03","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":1,"SMA":0,"SMK":2,"SMP":0},"total":3,"gelombang":"Gelombang 11","gel_num":11,"spmi":"2 September","litnum":"3 September","digital":"4 September","funding":126250000},{"kab":"Kabupaten Sumbawa","cluster":"Kabupaten Sumbawa_Dikmen_02","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":2,"SMK":1,"SMP":0},"total":3,"gelombang":"Gelombang 11","gel_num":11,"spmi":"2 September","litnum":"3 September","digital":"4 September","funding":135000000},{"kab":"Kabupaten Sumbawa","cluster":"Kabupaten Sumbawa_Dikmen_01","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":3,"SMK":1,"SMP":0},"total":4,"gelombang":"Gelombang 11","gel_num":11,"spmi":"2 September","litnum":"3 September","digital":"4 September","funding":180000000},{"kab":"Kabupaten Sumbawa Barat","cluster":"Kabupaten Sumbawa Barat_SMP_05","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":1},"total":1,"gelombang":"Gelombang 1","gel_num":1,"spmi":"10 Agustus","litnum":"11 Agustus","digital":"12 Agustus","funding":35000000},{"kab":"Kabupaten Sumbawa Barat","cluster":"Kabupaten Sumbawa Barat_SMP_04","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":1},"total":1,"gelombang":"Gelombang 1","gel_num":1,"spmi":"10 Agustus","litnum":"11 Agustus","digital":"12 Agustus","funding":35000000},{"kab":"Kabupaten Sumbawa Barat","cluster":"Kabupaten Sumbawa Barat_SMP_03","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":1},"total":1,"gelombang":"Gelombang 2","gel_num":2,"spmi":"11 Agustus","litnum":"12 Agustus","digital":"13 Agustus","funding":35000000},{"kab":"Kabupaten Sumbawa Barat","cluster":"Kabupaten Sumbawa Barat_SMP_02","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":1},"total":1,"gelombang":"Gelombang 2","gel_num":2,"spmi":"11 Agustus","litnum":"12 Agustus","digital":"13 Agustus","funding":35000000},{"kab":"Kabupaten Sumbawa Barat","cluster":"Kabupaten Sumbawa Barat_SMP_01","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":1},"total":1,"gelombang":"Gelombang 3","gel_num":3,"spmi":"12 Agustus","litnum":"13 Agustus","digital":"14 Agustus","funding":35000000},{"kab":"Kabupaten Sumbawa Barat","cluster":"Kabupaten Sumbawa Barat_SD_06","counts":{"PAUD":0,"PKBM":0,"SD":1,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":1,"gelombang":"Gelombang 3","gel_num":3,"spmi":"12 Agustus","litnum":"13 Agustus","digital":"14 Agustus","funding":22500000},{"kab":"Kabupaten Sumbawa Barat","cluster":"Kabupaten Sumbawa Barat_SD_05","counts":{"PAUD":0,"PKBM":0,"SD":2,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":2,"gelombang":"Gelombang 4","gel_num":4,"spmi":"13 Agustus","litnum":"14 Agustus","digital":"15 Agustus","funding":45000000},{"kab":"Kabupaten Sumbawa Barat","cluster":"Kabupaten Sumbawa Barat_SD_04","counts":{"PAUD":0,"PKBM":0,"SD":3,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 4","gel_num":4,"spmi":"13 Agustus","litnum":"14 Agustus","digital":"15 Agustus","funding":67500000},{"kab":"Kabupaten Sumbawa Barat","cluster":"Kabupaten Sumbawa Barat_SD_03","counts":{"PAUD":0,"PKBM":0,"SD":2,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":2,"gelombang":"Gelombang 5","gel_num":5,"spmi":"19 Agustus","litnum":"20 Agustus","digital":"21 Agustus","funding":45000000},{"kab":"Kabupaten Sumbawa Barat","cluster":"Kabupaten Sumbawa Barat_SD_02","counts":{"PAUD":0,"PKBM":0,"SD":3,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 5","gel_num":5,"spmi":"19 Agustus","litnum":"20 Agustus","digital":"21 Agustus","funding":67500000},{"kab":"Kabupaten Sumbawa Barat","cluster":"Kabupaten Sumbawa Barat_SD_01","counts":{"PAUD":0,"PKBM":0,"SD":1,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":1,"gelombang":"Gelombang 6","gel_num":6,"spmi":"20 Agustus","litnum":"21 Agustus","digital":"22 Agustus","funding":22500000},{"kab":"Kabupaten Sumbawa Barat","cluster":"Kabupaten Sumbawa Barat_PAUD_03","counts":{"PAUD":1,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":1,"gelombang":"Gelombang 6","gel_num":6,"spmi":"20 Agustus","litnum":"21 Agustus","digital":"22 Agustus","funding":16500000},{"kab":"Kabupaten Sumbawa Barat","cluster":"Kabupaten Sumbawa Barat_PAUD_02","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":1,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":1,"gelombang":"Gelombang 7","gel_num":7,"spmi":"26 Agustus","litnum":"27 Agustus","digital":"28 Agustus","funding":45000000},{"kab":"Kabupaten Sumbawa Barat","cluster":"Kabupaten Sumbawa Barat_PAUD_01","counts":{"PAUD":4,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":4,"gelombang":"Gelombang 7","gel_num":7,"spmi":"26 Agustus","litnum":"27 Agustus","digital":"28 Agustus","funding":66000000},{"kab":"Kabupaten Sumbawa Barat","cluster":"Kabupaten Sumbawa Barat_Dikmen_01","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":1,"SMA":2,"SMK":1,"SMP":0},"total":4,"gelombang":"Gelombang 7","gel_num":7,"spmi":"26 Agustus","litnum":"27 Agustus","digital":"28 Agustus","funding":171250000},{"kab":"Kota Bima","cluster":"Kota Bima_SMP_01","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":3},"total":3,"gelombang":"Gelombang 1","gel_num":1,"spmi":"10 Agustus","litnum":"11 Agustus","digital":"12 Agustus","funding":105000000},{"kab":"Kota Bima","cluster":"Kota Bima_SKB_01","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":1,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":1,"gelombang":"Gelombang 1","gel_num":1,"spmi":"10 Agustus","litnum":"11 Agustus","digital":"12 Agustus","funding":45000000},{"kab":"Kota Bima","cluster":"Kota Bima_SD_03","counts":{"PAUD":0,"PKBM":0,"SD":3,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 2","gel_num":2,"spmi":"11 Agustus","litnum":"12 Agustus","digital":"13 Agustus","funding":67500000},{"kab":"Kota Bima","cluster":"Kota Bima_SD_02","counts":{"PAUD":0,"PKBM":0,"SD":3,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 2","gel_num":2,"spmi":"11 Agustus","litnum":"12 Agustus","digital":"13 Agustus","funding":67500000},{"kab":"Kota Bima","cluster":"Kota Bima_SD_01","counts":{"PAUD":0,"PKBM":0,"SD":3,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 3","gel_num":3,"spmi":"12 Agustus","litnum":"13 Agustus","digital":"14 Agustus","funding":67500000},{"kab":"Kota Bima","cluster":"Kota Bima_PKBM_01","counts":{"PAUD":0,"PKBM":1,"SD":0,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":1,"gelombang":"Gelombang 3","gel_num":3,"spmi":"12 Agustus","litnum":"13 Agustus","digital":"14 Agustus","funding":45000000},{"kab":"Kota Bima","cluster":"Kota Bima_PAUD_01","counts":{"PAUD":5,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":5,"gelombang":"Gelombang 4","gel_num":4,"spmi":"13 Agustus","litnum":"14 Agustus","digital":"15 Agustus","funding":82500000},{"kab":"Kota Bima","cluster":"Kota Bima_Dikmen_02","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":3,"SMA":0,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 4","gel_num":4,"spmi":"13 Agustus","litnum":"14 Agustus","digital":"15 Agustus","funding":108750000},{"kab":"Kota Bima","cluster":"Kota Bima_Dikmen_01","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":3,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 4","gel_num":4,"spmi":"13 Agustus","litnum":"14 Agustus","digital":"15 Agustus","funding":135000000},{"kab":"Kota Mataram","cluster":"Kota Mataram_SMP_01","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":5},"total":5,"gelombang":"Gelombang 1","gel_num":1,"spmi":"10 Agustus","litnum":"11 Agustus","digital":"12 Agustus","funding":175000000},{"kab":"Kota Mataram","cluster":"Kota Mataram_SD_06","counts":{"PAUD":0,"PKBM":0,"SD":3,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 1","gel_num":1,"spmi":"10 Agustus","litnum":"11 Agustus","digital":"12 Agustus","funding":67500000},{"kab":"Kota Mataram","cluster":"Kota Mataram_SD_05","counts":{"PAUD":0,"PKBM":0,"SD":3,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 2","gel_num":2,"spmi":"11 Agustus","litnum":"12 Agustus","digital":"13 Agustus","funding":67500000},{"kab":"Kota Mataram","cluster":"Kota Mataram_SD_04","counts":{"PAUD":0,"PKBM":0,"SD":3,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 2","gel_num":2,"spmi":"11 Agustus","litnum":"12 Agustus","digital":"13 Agustus","funding":67500000},{"kab":"Kota Mataram","cluster":"Kota Mataram_SD_03","counts":{"PAUD":0,"PKBM":0,"SD":3,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 3","gel_num":3,"spmi":"12 Agustus","litnum":"13 Agustus","digital":"14 Agustus","funding":67500000},{"kab":"Kota Mataram","cluster":"Kota Mataram_SD_02","counts":{"PAUD":0,"PKBM":0,"SD":3,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 3","gel_num":3,"spmi":"12 Agustus","litnum":"13 Agustus","digital":"14 Agustus","funding":67500000},{"kab":"Kota Mataram","cluster":"Kota Mataram_SD_01","counts":{"PAUD":0,"PKBM":0,"SD":3,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 4","gel_num":4,"spmi":"13 Agustus","litnum":"14 Agustus","digital":"15 Agustus","funding":67500000},{"kab":"Kota Mataram","cluster":"Kota Mataram_PKBM_01","counts":{"PAUD":0,"PKBM":1,"SD":0,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":1,"gelombang":"Gelombang 4","gel_num":4,"spmi":"13 Agustus","litnum":"14 Agustus","digital":"15 Agustus","funding":45000000},{"kab":"Kota Mataram","cluster":"Kota Mataram_PAUD_01","counts":{"PAUD":5,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":0,"SMK":0,"SMP":0},"total":5,"gelombang":"Gelombang 5","gel_num":5,"spmi":"19 Agustus","litnum":"20 Agustus","digital":"21 Agustus","funding":82500000},{"kab":"Kota Mataram","cluster":"Kota Mataram_Dikmen_04","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":3,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 5","gel_num":5,"spmi":"19 Agustus","litnum":"20 Agustus","digital":"21 Agustus","funding":135000000},{"kab":"Kota Mataram","cluster":"Kota Mataram_Dikmen_03","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":1,"SMA":1,"SMK":1,"SMP":0},"total":3,"gelombang":"Gelombang 6","gel_num":6,"spmi":"20 Agustus","litnum":"21 Agustus","digital":"22 Agustus","funding":126250000},{"kab":"Kota Mataram","cluster":"Kota Mataram_Dikmen_02","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":2,"SMK":1,"SMP":0},"total":3,"gelombang":"Gelombang 6","gel_num":6,"spmi":"20 Agustus","litnum":"21 Agustus","digital":"22 Agustus","funding":135000000},{"kab":"Kota Mataram","cluster":"Kota Mataram_Dikmen_01","counts":{"PAUD":0,"PKBM":0,"SD":0,"SKB":0,"SLB":0,"SMA":3,"SMK":0,"SMP":0},"total":3,"gelombang":"Gelombang 6","gel_num":6,"spmi":"20 Agustus","litnum":"21 Agustus","digital":"22 Agustus","funding":135000000}],"regions":[{"kab":"Kabupaten Lombok Timur","counts":{"PAUD":5,"PKBM":5,"SD":79,"SKB":0,"SLB":0,"SMA":5,"SMK":7,"SMP":30},"funding":3675000000,"clusters":41,"total":131},{"kab":"Kabupaten Lombok Tengah","counts":{"PAUD":5,"PKBM":4,"SD":64,"SKB":0,"SLB":2,"SMA":2,"SMK":7,"SMP":23},"funding":2985000000,"clusters":20,"total":107},{"kab":"Kabupaten Bima","counts":{"PAUD":5,"PKBM":4,"SD":42,"SKB":0,"SLB":1,"SMA":7,"SMK":4,"SMP":14},"funding":2228750000,"clusters":28,"total":77},{"kab":"Kabupaten Sumbawa","counts":{"PAUD":5,"PKBM":4,"SD":38,"SKB":0,"SLB":2,"SMA":9,"SMK":6,"SMP":12},"funding":2285000000,"clusters":23,"total":76},{"kab":"Kabupaten Lombok Barat","counts":{"PAUD":5,"PKBM":4,"SD":38,"SKB":1,"SLB":0,"SMA":1,"SMK":5,"SMP":12},"funding":1852500000,"clusters":12,"total":66},{"kab":"Kabupaten Dompu","counts":{"PAUD":5,"PKBM":4,"SD":23,"SKB":1,"SLB":1,"SMA":4,"SMK":5,"SMP":7},"funding":1511250000,"clusters":14,"total":50},{"kab":"Kota Mataram","counts":{"PAUD":5,"PKBM":1,"SD":18,"SKB":0,"SLB":1,"SMA":9,"SMK":2,"SMP":5},"funding":1238750000,"clusters":13,"total":41},{"kab":"Kabupaten Lombok Utara","counts":{"PAUD":5,"PKBM":2,"SD":17,"SKB":0,"SLB":0,"SMA":1,"SMK":0,"SMP":5},"funding":775000000,"clusters":12,"total":30},{"kab":"Kabupaten Sumbawa Barat","counts":{"PAUD":5,"PKBM":0,"SD":12,"SKB":1,"SLB":1,"SMA":2,"SMK":1,"SMP":5},"funding":743750000,"clusters":15,"total":27},{"kab":"Kota Bima","counts":{"PAUD":5,"PKBM":1,"SD":9,"SKB":1,"SLB":3,"SMA":3,"SMK":0,"SMP":3},"funding":723750000,"clusters":9,"total":25}],"waves":[{"num":1,"spmi":"10 Agustus","litnum":"11 Agustus","digital":"12 Agustus","regions":["Kabupaten Bima","Kabupaten Dompu","Kabupaten Lombok Barat","Kabupaten Lombok Tengah","Kabupaten Lombok Timur","Kabupaten Lombok Utara","Kabupaten Sumbawa","Kabupaten Sumbawa Barat","Kota Bima","Kota Mataram"],"n_clusters":20,"total":57,"funding":2027500000},{"num":2,"spmi":"11 Agustus","litnum":"12 Agustus","digital":"13 Agustus","regions":["Kabupaten Bima","Kabupaten Dompu","Kabupaten Lombok Barat","Kabupaten Lombok Tengah","Kabupaten Lombok Timur","Kabupaten Lombok Utara","Kabupaten Sumbawa","Kabupaten Sumbawa Barat","Kota Bima","Kota Mataram"],"n_clusters":20,"total":72,"funding":2207500000},{"num":3,"spmi":"12 Agustus","litnum":"13 Agustus","digital":"14 Agustus","regions":["Kabupaten Bima","Kabupaten Dompu","Kabupaten Lombok Barat","Kabupaten Lombok Tengah","Kabupaten Lombok Timur","Kabupaten Lombok Utara","Kabupaten Sumbawa","Kabupaten Sumbawa Barat","Kota Bima","Kota Mataram"],"n_clusters":20,"total":70,"funding":1722500000},{"num":4,"spmi":"13 Agustus","litnum":"14 Agustus","digital":"15 Agustus","regions":["Kabupaten Bima","Kabupaten Dompu","Kabupaten Lombok Barat","Kabupaten Lombok Tengah","Kabupaten Lombok Timur","Kabupaten Lombok Utara","Kabupaten Sumbawa","Kabupaten Sumbawa Barat","Kota Bima","Kota Mataram"],"n_clusters":21,"total":69,"funding":1728750000},{"num":5,"spmi":"19 Agustus","litnum":"20 Agustus","digital":"21 Agustus","regions":["Kabupaten Bima","Kabupaten Dompu","Kabupaten Lombok Barat","Kabupaten Lombok Tengah","Kabupaten Lombok Timur","Kabupaten Lombok Utara","Kabupaten Sumbawa","Kabupaten Sumbawa Barat","Kota Mataram"],"n_clusters":18,"total":64,"funding":1710000000},{"num":6,"spmi":"20 Agustus","litnum":"21 Agustus","digital":"22 Agustus","regions":["Kabupaten Bima","Kabupaten Dompu","Kabupaten Lombok Barat","Kabupaten Lombok Tengah","Kabupaten Lombok Timur","Kabupaten Lombok Utara","Kabupaten Sumbawa","Kabupaten Sumbawa Barat","Kota Mataram"],"n_clusters":19,"total":62,"funding":1695250000},{"num":7,"spmi":"26 Agustus","litnum":"27 Agustus","digital":"28 Agustus","regions":["Kabupaten Bima","Kabupaten Dompu","Kabupaten Lombok Tengah","Kabupaten Lombok Timur","Kabupaten Sumbawa","Kabupaten Sumbawa Barat"],"n_clusters":13,"total":47,"funding":1286000000},{"num":8,"spmi":"27 Agustus","litnum":"28 Agustus","digital":"29 Agustus","regions":["Kabupaten Bima","Kabupaten Lombok Tengah","Kabupaten Lombok Timur","Kabupaten Sumbawa"],"n_clusters":8,"total":25,"funding":643750000},{"num":9,"spmi":"31 Agustus","litnum":"1 September","digital":"2 September","regions":["Kabupaten Bima","Kabupaten Lombok Tengah","Kabupaten Lombok Timur","Kabupaten Sumbawa"],"n_clusters":8,"total":28,"funding":838750000},{"num":10,"spmi":"1 September","litnum":"2 September","digital":"3 September","regions":["Kabupaten Bima","Kabupaten Lombok Tengah","Kabupaten Lombok Timur","Kabupaten Sumbawa"],"n_clusters":8,"total":31,"funding":906250000},{"num":11,"spmi":"2 September","litnum":"3 September","digital":"4 September","regions":["Kabupaten Bima","Kabupaten Lombok Timur","Kabupaten Sumbawa"],"n_clusters":7,"total":21,"funding":733750000},{"num":12,"spmi":"3 September","litnum":"4 September","digital":"5 September","regions":["Kabupaten Bima","Kabupaten Lombok Timur"],"n_clusters":4,"total":10,"funding":258000000},{"num":13,"spmi":"7 September","litnum":"8 September","digital":"9 September","regions":["Kabupaten Bima","Kabupaten Lombok Timur"],"n_clusters":4,"total":14,"funding":400750000},{"num":14,"spmi":"8 September","litnum":"9 September","digital":"10 September","regions":["Kabupaten Bima","Kabupaten Lombok Timur"],"n_clusters":4,"total":13,"funding":450000000},{"num":15,"spmi":"9 September","litnum":"10 September","digital":"11 September","regions":["Kabupaten Lombok Timur"],"n_clusters":2,"total":6,"funding":135000000},{"num":16,"spmi":"10 September","litnum":"11 September","digital":"12 September","regions":["Kabupaten Lombok Timur"],"n_clusters":2,"total":7,"funding":157500000},{"num":17,"spmi":"14 September","litnum":"15 September","digital":"16 September","regions":["Kabupaten Lombok Timur"],"n_clusters":2,"total":6,"funding":135000000},{"num":18,"spmi":"15 September","litnum":"16 September","digital":"17 September","regions":["Kabupaten Lombok Timur"],"n_clusters":2,"total":6,"funding":135000000},{"num":19,"spmi":"16 September","litnum":"17 September","digital":"18 September","regions":["Kabupaten Lombok Timur"],"n_clusters":2,"total":10,"funding":307500000},{"num":20,"spmi":"17 September","litnum":"18 September","digital":"19 September","regions":["Kabupaten Lombok Timur"],"n_clusters":3,"total":12,"funding":540000000}]}</script>
+<script>
+const DATA = JSON.parse(document.getElementById('payload-data').textContent);
+const clusters = DATA.clusters, regions = DATA.regions, waves = DATA.waves;
+
+const JCOLOR = {PAUD:'var(--gold)',SD:'var(--teal)',SMP:'var(--blue)',SMA:'var(--coral)',SMK:'var(--orchid)',SLB:'var(--mint)',PKBM:'var(--bronze)',SKB:'var(--slate)'};
+const JCOLOR_HEX = {PAUD:'#E3A83B',SD:'#4FA98C',SMP:'#6C8FE0',SMA:'#E2695A',SMK:'#C77DD1',SLB:'#7FD1C6',PKBM:'#B8935A',SKB:'#8C97C4'};
+const JORDER = ['PAUD','PKBM','SKB','SD','SMP','SMA','SMK','SLB'];
+const JLABEL = {PAUD:'PAUD',PKBM:'PKBM',SKB:'SKB',SD:'SD',SMP:'SMP',SMA:'SMA',SMK:'SMK',SLB:'SLB'};
+
+function rupiah(n){
+  if(n>=1e9) return 'Rp '+(n/1e9).toFixed(2)+' M';
+  if(n>=1e6) return 'Rp '+(n/1e6).toFixed(0)+' jt';
+  return 'Rp '+n.toLocaleString('id-ID');
+}
+function rupiahFull(n){ return 'Rp ' + n.toLocaleString('id-ID'); }
+
+// ===== KPIs =====
+const totalSchools = clusters.reduce((a,c)=>a+c.total,0);
+const totalFunding = clusters.reduce((a,c)=>a+c.funding,0);
+const totalClusters = clusters.length;
+const totalWaves = waves.length;
+const totalRegions = regions.length;
+
+const kpis = [
+  {label:'Total Satuan Pendidikan', value:totalSchools, sub:'penerima BOSP dalam gugus terbaik', color:'var(--gold)'},
+  {label:'Total Alokasi', value:rupiah(totalFunding), sub:rupiahFull(totalFunding), color:'var(--teal)'},
+  {label:'Gugus Belajar', value:totalClusters, sub:'kelompok sekolah terdekat', color:'var(--blue)'},
+  {label:'Gelombang Bimtek', value:totalWaves, sub:'10 Agustus \u2013 19 September', color:'var(--coral)'},
+  {label:'Kab/Kota', value:totalRegions, sub:'cakupan se-Provinsi NTB', color:'var(--orchid)'},
+];
+document.getElementById('kpiRow').innerHTML = kpis.map(k=>`
+  <div class="kpi" style="--kc:${k.color}">
+    <div class="label">${k.label}</div>
+    <div class="value">${k.value}</div>
+    <div class="sub">${k.sub}</div>
+  </div>`).join('');
+
+// ===== Wave timeline =====
+const waveScroll = document.getElementById('waveScroll');
+waveScroll.innerHTML = waves.map(w=>`
+  <div class="wave-card" data-gel="${w.num}">
+    <div class="wnum">GELOMBANG ${w.num}</div>
+    <div class="wdate">${w.spmi.split(' ')[0]}<span style="color:var(--text-faint);font-size:12px;font-weight:400;"> ${w.spmi.split(' ')[1].slice(0,3)}</span></div>
+    <div class="wave-track"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+    <div class="wstat"><span>Wilayah</span><b>${w.regions.length}</b></div>
+    <div class="wstat"><span>Sekolah</span><b>${w.total}</b></div>
+  </div>`).join('');
+
+function renderWaveDetail(num){
+  const w = waves.find(x=>x.num===num);
+  document.querySelectorAll('.wave-card').forEach(el=>el.classList.toggle('active', +el.dataset.gel===num));
+  document.getElementById('waveDetail').innerHTML = `
+    <div class="wd-head">
+      <h3>Gelombang ${w.num} &middot; ${w.n_clusters} gugus &middot; ${w.total} sekolah &middot; ${rupiah(w.funding)}</h3>
+      <div class="wd-dates">
+        <span>SPMI <b>${w.spmi}</b></span>
+        <span>Litnum <b>${w.litnum}</b></span>
+        <span>Digitalisasi <b>${w.digital}</b></span>
+      </div>
+    </div>
+    <div class="wd-regions">${w.regions.map(r=>`<span class="chip">${r.replace('Kabupaten ','Kab. ')}</span>`).join('')}</div>
+  `;
+}
+waveScroll.addEventListener('click', e=>{
+  const card = e.target.closest('.wave-card');
+  if(card) renderWaveDetail(+card.dataset.gel);
+});
+renderWaveDetail(1);
+
+// ===== Region bars =====
+const maxRegionTotal = Math.max(...regions.map(r=>r.total));
+document.getElementById('regionList').innerHTML = regions.map(r=>{
+  const segs = JORDER.filter(j=>r.counts[j]>0).map(j=>{
+    const pct = (r.counts[j]/r.total*100).toFixed(2);
+    return `<div class="bar-seg" style="width:${pct}%;background:${JCOLOR[j]}" title="${JLABEL[j]}: ${r.counts[j]}"></div>`;
+  }).join('');
+  const widthPct = (r.total/maxRegionTotal*100).toFixed(1);
+  return `
+  <div class="region-row">
+    <div>
+      <div class="rname">${r.kab.replace('Kabupaten ','Kab. ')}</div>
+      <div class="rmeta">${r.clusters} gugus</div>
+    </div>
+    <div class="bar-track" style="width:${widthPct}%;min-width:40%;">${segs}</div>
+    <div class="rfund"><b>${r.total} sklh</b>${rupiah(r.funding)}</div>
+  </div>`;
+}).join('');
+
+// ===== Donut: funding by Jenis BOSP category (PAUD group / Kesetaraan group / BOS group) =====
+function jenisGroup(j){
+  if(j==='PAUD') return 'BOP PAUD';
+  if(j==='PKBM'||j==='SKB') return 'BOP Kesetaraan';
+  return 'BOS (SD\u2013SMA/SMK/SLB)';
+}
+const jenisFunding = {};
+clusters.forEach(c=>{
+  JORDER.forEach(j=>{
+    if(c.counts[j]>0){
+      const g = jenisGroup(j);
+      const rate = {PAUD:16500000,PKBM:45000000,SKB:45000000,SD:22500000,SMP:35000000,SMA:45000000,SMK:45000000,SLB:36250000}[j];
+      jenisFunding[g] = (jenisFunding[g]||0) + c.counts[j]*rate;
+    }
+  });
+});
+const jenisColors = {'BOP PAUD':'#E3A83B','BOP Kesetaraan':'#B8935A','BOS (SD\u2013SMA/SMK/SLB)':'#4FA98C'};
+const jenisEntries = Object.entries(jenisFunding);
+const jenisTotal = jenisEntries.reduce((a,[,v])=>a+v,0);
+let cumAngle = -90;
+const cx=66, cy=66, rOuter=58, rInner=36;
+function polar(cx,cy,r,angle){
+  const rad = angle*Math.PI/180;
+  return [cx + r*Math.cos(rad), cy + r*Math.sin(rad)];
+}
+let donutPaths = '';
+jenisEntries.forEach(([name,val])=>{
+  const angle = val/jenisTotal*360;
+  const start = cumAngle, end = cumAngle+angle;
+  const [x1,y1] = polar(cx,cy,rOuter,start);
+  const [x2,y2] = polar(cx,cy,rOuter,end);
+  const [x3,y3] = polar(cx,cy,rInner,end);
+  const [x4,y4] = polar(cx,cy,rInner,start);
+  const largeArc = angle>180?1:0;
+  const d = `M${x1},${y1} A${rOuter},${rOuter} 0 ${largeArc} 1 ${x2},${y2} L${x3},${y3} A${rInner},${rInner} 0 ${largeArc} 0 ${x4},${y4} Z`;
+  donutPaths += `<path d="${d}" fill="${jenisColors[name]}" opacity="0.92"/>`;
+  cumAngle = end;
+});
+document.getElementById('donutSvg').innerHTML = donutPaths + `<circle cx="${cx}" cy="${cy}" r="${rInner-2}" fill="var(--panel)"/>`;
+document.getElementById('donutLegend').innerHTML = jenisEntries.map(([name,val])=>`
+  <div class="drow"><span><i style="background:${jenisColors[name]}"></i>${name}</span><b>${rupiah(val)}</b></div>
+`).join('');
+
+// ===== Jenjang bars =====
+const jenjangTotals = {};
+JORDER.forEach(j=>jenjangTotals[j] = clusters.reduce((a,c)=>a+c.counts[j],0));
+const maxJenjang = Math.max(...Object.values(jenjangTotals));
+document.getElementById('jenjangBars').innerHTML = JORDER.map(j=>`
+  <div class="jenjang-row">
+    <i style="background:${JCOLOR[j]}"></i>
+    <div class="jname">${JLABEL[j]}</div>
+    <div class="jbar"><span style="width:${(jenjangTotals[j]/maxJenjang*100).toFixed(1)}%;background:${JCOLOR[j]}"></span></div>
+    <div class="jval">${jenjangTotals[j]}</div>
+  </div>
+`).join('');
+
+// ===== Explorer table =====
+const filterKab = document.getElementById('filterKab');
+regions.forEach(r=>{
+  const opt = document.createElement('option'); opt.value=r.kab; opt.textContent=r.kab.replace('Kabupaten ','Kab. ');
+  filterKab.appendChild(opt);
+});
+const filterJenjang = document.getElementById('filterJenjang');
+JORDER.forEach(j=>{
+  const opt = document.createElement('option'); opt.value=j; opt.textContent=j;
+  filterJenjang.appendChild(opt);
+});
+
+function dominantJenjang(counts){
+  let best=null,bv=-1;
+  JORDER.forEach(j=>{ if(counts[j]>bv){bv=counts[j];best=j;} });
+  return best;
+}
+
+function renderTable(){
+  const q = document.getElementById('searchInput').value.trim().toLowerCase();
+  const kab = filterKab.value;
+  const jen = filterJenjang.value;
+  const sortBy = document.getElementById('sortBy').value;
+
+  let rows = clusters.filter(c=>{
+    if(q && !c.cluster.toLowerCase().includes(q)) return false;
+    if(kab && c.kab!==kab) return false;
+    if(jen && !(c.counts[jen]>0)) return false;
+    return true;
+  });
+
+  rows = rows.slice().sort((a,b)=>{
+    if(sortBy==='total_desc') return b.total-a.total;
+    if(sortBy==='total_asc') return a.total-b.total;
+    if(sortBy==='funding_desc') return b.funding-a.funding;
+    if(sortBy==='gel_asc') return a.gel_num-b.gel_num;
+    if(sortBy==='name_asc') return a.cluster.localeCompare(b.cluster);
+    return 0;
+  });
+
+  document.getElementById('explorerCount').textContent = rows.length + ' / ' + clusters.length + ' gugus';
+
+  document.getElementById('tableBody').innerHTML = rows.map(c=>{
+    const dom = dominantJenjang(c.counts);
+    return `<tr>
+      <td class="cname">${c.cluster}</td>
+      <td>${c.kab.replace('Kabupaten ','Kab. ')}</td>
+      <td><span class="jtag" style="background:${JCOLOR_HEX[dom]}22;color:${JCOLOR_HEX[dom]}">${dom}</span></td>
+      <td class="num">${c.total}</td>
+      <td class="num">${rupiahFull(c.funding)}</td>
+      <td class="num">${c.gel_num}</td>
+    </tr>`;
+  }).join('');
+}
+['searchInput'].forEach(id=>document.getElementById(id).addEventListener('input', renderTable));
+['filterKab','filterJenjang','sortBy'].forEach(id=>document.getElementById(id).addEventListener('change', renderTable));
+renderTable();
+</script>
+</body>
+</html>
